@@ -4,6 +4,17 @@ import json
 import os
 import requests
 
+uk_url =
+india_url = 'https://data.covid19india.org/v4/min/timeseries.min.json'
+us_url = 'https://api.covidtracking.com/v2/us/daily.json
+
+def read_api(url):
+    r = requests.get(url)
+    info = r.text
+    d = json.loads(info)
+    return d
+
+
 def uk_data(cur, conn):
     pass
 
