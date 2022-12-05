@@ -2,6 +2,7 @@ import unittest
 import sqlite3
 import json
 import os
+import requests
 
 def uk_data(cur, conn):
     pass
