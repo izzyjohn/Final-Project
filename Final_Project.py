@@ -5,8 +5,8 @@ import os
 import requests
 
 uk_url = 'https://api.coronavirus.data.gov.uk/v1/data'
-india_url = 'https://data.covid19india.org/v4/min/timeseries.min.json'
-us_url = 'https://api.covidtracking.com/v2/us/daily.json
+canada_url = 'https://api.covid19tracker.ca/reports'
+us_url = 'https://api.covidtracking.com/v2/us/daily.json'
 
 def read_api(url):
     r = requests.get(url)
@@ -14,12 +14,27 @@ def read_api(url):
     d = json.loads(info)
     return d
 
-
 def uk_data(cur, conn):
     pass
 
-def india_data(cur, conn):
+def canada_data(api_data, cur, con):
+    data_dict = api_data['data']
+    for x in data_dict:
+        date = x['date']
+        total_cases = x['total_cases']
+        change_cases = x['change_cases']
+        total_fatalities = x['total_fatalities']
+        change_fatalities = x['change_fatalities']
+        total_criticals = x['total_criticals']
+        total_hospitalizations = x['total_hospitalizations']
+
+
+
+
     pass
+
+data = read_api(canada_url)
+print(canada_data(data))
 
 def us_data(cur, conn):
     pass
