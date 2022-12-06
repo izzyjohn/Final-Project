@@ -17,7 +17,7 @@ def read_api(url):
 def uk_data(cur, conn):
     pass
 
-def canada_data(api_data, cur, con):
+def canada_data(api_data):
     data_dict = api_data['data']
     for x in data_dict:
         date = x['date']
