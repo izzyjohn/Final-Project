@@ -13,7 +13,6 @@ def read_api(url):
     info = r.text
     d = json.loads(info)
     return d
-#print(read_api(uk_url))
 
 def uk_data(curr, conn):
     api_data = read_api(uk_url)
