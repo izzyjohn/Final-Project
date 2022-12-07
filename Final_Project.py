@@ -58,7 +58,8 @@ def uk_category_table(cur, conn):
         cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
 
-def canada_data(api_data, cur, conn):
+def canada_data(cur, conn):
+    api_data = read_api(canada_url)
     data_dict = api_data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS Canada (date TEXT, total_cases INTEGER, change_cases INTEGER, \
     total_fatalities INTEGER, change_fatalities INTEGER, total_criticals INTEGER, total_hospitalizations INTEGER)')
@@ -74,9 +75,6 @@ def canada_data(api_data, cur, conn):
         total_criticals, total_hospitalizations) VALUES (?, ?, ?, ?, ?, ?, ?)", (date, total_cases, change_cases, \
         total_fatalities, change_fatalities, total_criticals, total_hospitalizations))
     conn.commit()
-
-#data = read_api(canada_url)
-#print(canada_data(data))
 
 def us_data(cur, conn):
     data = read_api(us_url)
@@ -98,8 +96,8 @@ def main():
     cur, conn = open_database('covid.db')
     uk_category_table(cur, conn)
     uk_data(cur, conn)
-    us_data(cur, conn)
     canada_data(cur, conn)
+    us_data(cur, conn)
 
 main()
 
