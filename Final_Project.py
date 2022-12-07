@@ -69,8 +69,8 @@ def canada_data(api_data, cur, conn):
         total_fatalities, change_fatalities, total_criticals, total_hospitalizations))
     conn.commit()
 
-data = read_api(canada_url)
-print(canada_data(data))
+#data = read_api(canada_url)
+#print(canada_data(data))
 
 def us_data(cur, conn):
     data = read_api(us_url)
