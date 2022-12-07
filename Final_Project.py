@@ -98,6 +98,7 @@ def main():
     uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
+    print('hello')
 
 main()
 
