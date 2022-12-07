@@ -51,17 +51,24 @@ def canada_data(api_data, cur, conn):
 data = read_api(canada_url)
 print(canada_data(data))
 
-def us_data():
+def us_data(cur, conn):
     data = read_api(us_url)
     dates = data['data']
+    cur.execute('CREATE TABLE IF NOT EXISTS usa (date TEXT, total_cases INTEGER, change_cases INTEGER, total_deaths INTEGER,\
+         change_deaths INTEGER, current_hospital INTEGER, current_icu INTEGER)')
     for date_info in dates:
         date = date_info['date']
         total_cases = date_info['cases']['total']['value']
-        new_cases = date_info['cases']['total']['calculated']['change_from_prior_day']
+        change_cases = date_info['cases']['total']['calculated']['change_from_prior_day']
         total_deaths = date_info['outcomes']['death']['total']['value']
-        new_deaths = date_info['outcomes']['death']['calculated']['change_from_prior_day']
+        change_deaths = date_info['outcomes']['death']['calculated']['change_from_prior_day']
         current_hospital = date_info['outcomes']['hospitalized']['currently']['value']
         current_icu = date_info['outcomes']['hospitalized']['in_icu']['currently']['value']
+        cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu),\
+            VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
+
+def main():
+    cur, conn = open_database('covid.db')
       
 
 
