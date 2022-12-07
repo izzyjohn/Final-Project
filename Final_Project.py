@@ -25,12 +25,14 @@ def uk_data(cur, conn):
     data_dict = api_data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS UK (date TEXT, new_cases INTEGER, total_cases INTEGER, \
     n_death_id TEXT, total_deaths INTEGER)')
-    for d in data_dict:
+    res = cur.execute("SELECT * FROM UK")
+    num_entries = len(res.fetchall())
+    dates25 = data_dict[num_entries:num_entries + 25]
+    for d in dates25:
         date = d["date"]
         new_cases = d["latestBy"]
         total_cases = d['confirmed']
         new_deaths = d['deathNew']
-        n_death_cat = ""
         if new_deaths == "None":
             n_death_category = "very low"
         elif type(new_deaths) == int:
@@ -63,7 +65,10 @@ def canada_data(cur, conn):
     data_dict = api_data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS Canada (date TEXT, total_cases INTEGER, change_cases INTEGER, \
     total_fatalities INTEGER, change_fatalities INTEGER, total_criticals INTEGER, total_hospitalizations INTEGER)')
-    for x in data_dict:
+    res = cur.execute("SELECT * FROM Canada")
+    num_entries = len(res.fetchall())
+    dates25 = data_dict[num_entries:num_entries + 25]
+    for x in dates25:
         date = x['date']
         total_cases = x['total_cases']
         change_cases = x['change_cases']
@@ -81,7 +86,10 @@ def us_data(cur, conn):
     dates = data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS usa (date TEXT, total_cases INTEGER, change_cases INTEGER, total_deaths INTEGER,\
          change_deaths INTEGER, current_hospital INTEGER, current_icu INTEGER)')
-    for date_info in dates:
+    res = cur.execute("SELECT * FROM usa")
+    num_entries = len(res.fetchall())
+    dates25 = dates[num_entries:num_entries + 25]
+    for date_info in dates25:
         date = date_info['date']
         total_cases = date_info['cases']['total']['value']
         change_cases = date_info['cases']['total']['calculated']['change_from_prior_day']
@@ -92,7 +100,7 @@ def us_data(cur, conn):
         cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu) \
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
     conn.commit()
-    
+
 def main():
     cur, conn = open_database('covid.db')
     uk_category_table(cur, conn)
