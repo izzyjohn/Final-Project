@@ -54,7 +54,7 @@ def uk_data(cur, conn):
 def uk_category_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS death_category (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
     categories = ["very low", "low", "medium", "high", "very high"]
-    for i in range(0, len(categories)):
+    for i in range(len(categories)):
         cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
 
