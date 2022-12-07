@@ -32,7 +32,7 @@ def uk_data(cur, conn):
         new_deaths = d['deathNew']
         n_death_cat = ""
         if new_deaths == "None":
-            n_death_category = "null"
+            n_death_category = "very low"
         elif type(new_deaths) == int:
             if new_deaths < 10:
                 n_death_category = "very low"
@@ -53,7 +53,7 @@ def uk_data(cur, conn):
 
 def uk_category_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS death_category (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
-    categories = ["null", "very low", "low", "medium", "high", "very high"]
+    categories = ["very low", "low", "medium", "high", "very high"]
     for i in range(0, len(categories)):
         cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
