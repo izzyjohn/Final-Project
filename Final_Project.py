@@ -20,7 +20,7 @@ def read_api(url):
     d = json.loads(info)
     return d
 
-def uk_data(curr, conn):
+def uk_data(cur, conn):
     api_data = read_api(uk_url)
     data_dict = api_data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS UK (date TEXT, new_cases INTEGER, total_cases INTEGER, \
@@ -33,11 +33,11 @@ def uk_data(curr, conn):
         n_death_cat = ""
         if new_deaths < 10:
             n_death_category = "very low"
-        elif new_death < 50:
+        elif new_deaths < 50:
             n_death_category = "low"
-        elif new_death < 150:
+        elif new_deaths < 150:
             n_death_category = "medium"
-        elif new_death < 275:
+        elif new_deaths < 275:
             n_death_category = "high"
         else:
             n_death_category = "very high"
@@ -46,7 +46,7 @@ def uk_data(curr, conn):
         VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_category, total_deaths))
 
 def uk_category_table(cur, conn):
-    cur.execute("CREATE TABLE IF NOT EXISTS new_deaths (id INTEGER PRIMARY KEY, category TEXT UNIQUE))
+    cur.execute("CREATE TABLE IF NOT EXISTS new_deaths (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
     categories = ["very low", "low", "medium", "high", "very high"]
     for i in range(len(categories)):
         cur.execute("INSERT OR IGNORE INTO new_deaths (id, category)", (i,categories[i]))
