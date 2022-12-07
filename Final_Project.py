@@ -86,12 +86,13 @@ def us_data(cur, conn):
         total_cases = date_info['cases']['total']['value']
         change_cases = date_info['cases']['total']['calculated']['change_from_prior_day']
         total_deaths = date_info['outcomes']['death']['total']['value']
-        change_deaths = date_info['outcomes']['death']['calculated']['change_from_prior_day']
+        change_deaths = date_info['outcomes']['death']['total']['calculated']['change_from_prior_day']
         current_hospital = date_info['outcomes']['hospitalized']['currently']['value']
         current_icu = date_info['outcomes']['hospitalized']['in_icu']['currently']['value']
         cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu) \
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
-
+    conn.commit()
+    
 def main():
     cur, conn = open_database('covid.db')
     uk_category_table(cur, conn)
@@ -100,5 +101,4 @@ def main():
     us_data(cur, conn)
 
 main()
-
 
