@@ -24,10 +24,10 @@ def uk_data(cur, conn):
     api_data = read_api(uk_url)
     data_dict = api_data['data']
     cur.execute('CREATE TABLE IF NOT EXISTS UK (date TEXT, new_cases INTEGER, total_cases INTEGER, \
-    n_death_category TEXT, total_deaths INTEGER)')
+    n_death_id TEXT, total_deaths INTEGER)')
     for d in data_dict:
         date = d["date"]
-        new_cases = d["latest_by"]
+        new_cases = d["latestBy"]
         total_cases = d['confirmed']
         new_deaths = d['deathNew']
         n_death_cat = ""
@@ -41,15 +41,17 @@ def uk_data(cur, conn):
             n_death_category = "high"
         else:
             n_death_category = "very high"
+        res = cur.execute(f"SELECT id FROM death_category WHERE category = '{n_death_category}'")
+        n_death_id = res.fetchone()[0]
         total_deaths = d['death']
-        cur.execute("INSERT OR IGNORE INTO UK (date, new_cases, total_cases, n_death_category, total_deaths) \
-        VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_category, total_deaths))
+        cur.execute("INSERT OR IGNORE INTO UK (date, new_cases, total_cases, n_death_id, total_deaths) \
+        VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_id, total_deaths))
 
 def uk_category_table(cur, conn):
-    cur.execute("CREATE TABLE IF NOT EXISTS new_deaths (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
+    cur.execute("CREATE TABLE IF NOT EXISTS death_category (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
     categories = ["very low", "low", "medium", "high", "very high"]
     for i in range(len(categories)):
-        cur.execute("INSERT OR IGNORE INTO new_deaths (id, category)", (i,categories[i]))
+        cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
 
 def canada_data(api_data, cur, conn):
@@ -69,8 +71,8 @@ def canada_data(api_data, cur, conn):
         total_fatalities, change_fatalities, total_criticals, total_hospitalizations))
     conn.commit()
 
-data = read_api(canada_url)
-print(canada_data(data))
+#data = read_api(canada_url)
+#print(canada_data(data))
 
 def us_data(cur, conn):
     data = read_api(us_url)
@@ -85,12 +87,16 @@ def us_data(cur, conn):
         change_deaths = date_info['outcomes']['death']['calculated']['change_from_prior_day']
         current_hospital = date_info['outcomes']['hospitalized']['currently']['value']
         current_icu = date_info['outcomes']['hospitalized']['in_icu']['currently']['value']
-        cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu),\
+        cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu) \
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
 
 def main():
     cur, conn = open_database('covid.db')
-      
+    uk_category_table(cur, conn)
+    uk_data(cur, conn)
+    us_data(cur, conn)
+    canada_data(cur, conn)
 
+main()
 
 
