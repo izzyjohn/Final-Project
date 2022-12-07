@@ -33,8 +33,10 @@ def uk_data(curr, conn):
         total_deaths = d['death']
     pass
 
-def canada_data(api_data):
+def canada_data(api_data, cur, conn):
     data_dict = api_data['data']
+    cur. execute("DROP TABLE IF EXISTS Canada")
+    cur.execute('CREATE TABLE IF NOT EXISTS Canada (date TEXT, total_cases INTEGER, change_cases INTEGER, total_fatalities INTEGER, change_fatalities INTEGER, total_criticals INTEGER, total_hospitalizations INTEGER)')
     for x in data_dict:
         date = x['date']
         total_cases = x['total_cases']
@@ -43,6 +45,8 @@ def canada_data(api_data):
         change_fatalities = x['change_fatalities']
         total_criticals = x['total_criticals']
         total_hospitalizations = x['total_hospitalizations']
+        cur.execute("INSERT OR IGNORE INTO Canada (date, total_cases, change_cases, total_fatalities, change_fatalities, total_criticals, total_hospitalizations) VALUES (?, ?, ?, ?, ?, ?, ?)", (date, total_cases, change_cases, total_fatalities, change_fatalities, total_criticals, total_hospitalizations))
+    conn.commit()
 
 data = read_api(canada_url)
 print(canada_data(data))
