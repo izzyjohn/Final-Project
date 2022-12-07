@@ -31,26 +31,30 @@ def uk_data(cur, conn):
         total_cases = d['confirmed']
         new_deaths = d['deathNew']
         n_death_cat = ""
-        if new_deaths < 10:
-            n_death_category = "very low"
-        elif new_deaths < 50:
-            n_death_category = "low"
-        elif new_deaths < 150:
-            n_death_category = "medium"
-        elif new_deaths < 275:
-            n_death_category = "high"
-        else:
-            n_death_category = "very high"
+        if new_deaths == "None":
+            n_death_category = "null"
+        elif type(new_deaths) == int:
+            if new_deaths < 10:
+                n_death_category = "very low"
+            elif new_deaths < 50:
+                n_death_category = "low"
+            elif new_deaths < 150:
+                n_death_category = "medium"
+            elif new_deaths < 275:
+                n_death_category = "high"
+            else:
+                n_death_category = "very high"
         res = cur.execute(f"SELECT id FROM death_category WHERE category = '{n_death_category}'")
         n_death_id = res.fetchone()[0]
         total_deaths = d['death']
         cur.execute("INSERT OR IGNORE INTO UK (date, new_cases, total_cases, n_death_id, total_deaths) \
         VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_id, total_deaths))
+    conn.commit()
 
 def uk_category_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS death_category (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
-    categories = ["very low", "low", "medium", "high", "very high"]
-    for i in range(len(categories)):
+    categories = ["null", "very low", "low", "medium", "high", "very high"]
+    for i in range(0, len(categories)):
         cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
 
