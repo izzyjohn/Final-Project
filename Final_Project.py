@@ -23,11 +23,12 @@ def read_api(url):
 def uk_data(cur, conn):
     api_data = read_api(uk_url)
     data_dict = api_data['data']
+    reversed_list = data_dict[::-1]
     cur.execute('CREATE TABLE IF NOT EXISTS UK (date TEXT, new_cases INTEGER, total_cases INTEGER, \
     n_death_id TEXT, total_deaths INTEGER)')
     res = cur.execute("SELECT * FROM UK")
     num_entries = len(res.fetchall())
-    dates25 = data_dict[num_entries:num_entries + 25]
+    dates25 = reversed_list[num_entries:num_entries + 25]
     for d in dates25:
         date = d["date"]
         new_cases = d["latestBy"]
@@ -46,6 +47,8 @@ def uk_data(cur, conn):
                 n_death_category = "high"
             else:
                 n_death_category = "very high"
+        else:
+            n_death_category = "very low"
         res = cur.execute(f"SELECT id FROM death_category WHERE category = '{n_death_category}'")
         n_death_id = res.fetchone()[0]
         total_deaths = d['death']
@@ -84,11 +87,12 @@ def canada_data(cur, conn):
 def us_data(cur, conn):
     data = read_api(us_url)
     dates = data['data']
+    reversed_list = dates[::-1]
     cur.execute('CREATE TABLE IF NOT EXISTS usa (date TEXT, total_cases INTEGER, change_cases INTEGER, total_deaths INTEGER,\
          change_deaths INTEGER, current_hospital INTEGER, current_icu INTEGER)')
     res = cur.execute("SELECT * FROM usa")
     num_entries = len(res.fetchall())
-    dates25 = dates[num_entries:num_entries + 25]
+    dates25 = reversed_list[num_entries:num_entries + 25]
     for date_info in dates25:
         date = date_info['date']
         total_cases = date_info['cases']['total']['value']
