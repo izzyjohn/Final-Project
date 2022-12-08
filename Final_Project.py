@@ -105,6 +105,7 @@ def us_data(cur, conn):
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
     conn.commit()
 
+
 def main():
     cur, conn = open_database('covid.db')
     uk_category_table(cur, conn)
