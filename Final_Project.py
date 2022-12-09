@@ -130,7 +130,7 @@ def dif_Us_Canada_Average_Icu(cur, conn):
     canada_average = canada_total/num_dates
     us_total = 0
     for date in tup_list:
-        us_total += date[2]
+        us_total += date[3]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
     return dif_average
@@ -146,7 +146,7 @@ def dif_Us_Canada_Average_Hospital(cur, conn):
     canada_average = canada_total/num_dates
     us_total = 0
     for date in tup_list:
-        us_total += date[2]
+        us_total += date[3]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
     return dif_average
