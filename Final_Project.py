@@ -203,9 +203,9 @@ def write_textfile(file_name, cur, conn):
 
 
 def visualization_1(cur, conn):
-    date = cur.execute("SELECT date FROM Canada")
+    date = cur.execute("SELECT date FROM Canada LIMIT 10")
     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada LIMIT 10")
-    USA_hospital = cur.execute("SELECT current_hospital FROM USA LIMIT 10")
+    USA_hospital = cur.execute("SELECT current_hospital FROM usa LIMIT 10")
     fig = go.Figure(data = [
         go.Bar(name = "Canada", x=date, y=canada_hospital, color = 'rgb(55, 83, 109)'),
         go.Bar(name = "USA", x=date, y=USA_hospital, color = 'rgb(26, 118, 225)')])
