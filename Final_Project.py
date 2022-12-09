@@ -133,7 +133,8 @@ def dif_Us_Canada_Average_Icu(cur, conn):
         us_total += date[3]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
-    return dif_average
+    rounded_average = round(dif_average, 3)
+    return rounded_average
 
 def dif_Us_Canada_Average_Hospital(cur, conn):
     res = cur.execute('SELECT Canada.date, usa.date, Canada.total_hospitalizations, usa.current_hospital \
@@ -149,7 +150,8 @@ def dif_Us_Canada_Average_Hospital(cur, conn):
         us_total += date[3]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
-    return dif_average
+    rounded_average = round(dif_average, 3)
+    return rounded_average
 
 def uk_new_cases_average(cur, conn):
     res = cur.execute('SELECT new_cases FROM UK')
@@ -159,7 +161,8 @@ def uk_new_cases_average(cur, conn):
     for date in tup_list:
         case_total += date[0]
     uk_average = case_total/num_dates
-    return uk_average
+    rounded_average = round(uk_average, 3)
+    return rounded_average
 
 def write_textfile(file_name, cur, conn):
     f = open(file_name, "w")
