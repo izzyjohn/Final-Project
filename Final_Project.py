@@ -212,29 +212,53 @@ def write_textfile(file_name, cur, conn):
 #     fig.update_layout(barmode='group')
 #     fig.show()
 
+# def visualization_1(cur, conn):
+#     date = cur.execute("SELECT date FROM Canada")
+#     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada")
+#     USA_hospital = cur.execute("SELECT current_hospital FROM usa")
+#     date_lst = []
+#     canada_lst = []
+#     usa_lst = []
+#     for x in date:
+#         date_lst.append(x[0])
+#     for x in canada_hospital:
+#         canada_lst.append(x[0])
+#     for x in USA_hospital:
+#         usa_lst.append(x[0])
+#     fig = go.Figure(data = [
+#         go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(55, 83, 109)'),
+#         go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(26, 118, 225)')])
+#     fig.update_layout(barmode='group')
+#     fig.show()
+
 def visualization_1(cur, conn):
-    date = cur.execute("SELECT date FROM Canada LIMIT 10")
-    canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada LIMIT 10")
-    USA_hospital = cur.execute("SELECT current_hospital FROM usa LIMIT 10")
+    date = cur.execute("SELECT date FROM Canada")
+    date_tup_list = date.fetchall()
+    canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada")
+    canada_tup_list = canada_hospital.fetchall()
+    USA_hospital = cur.execute("SELECT current_hospital FROM usa")
+    usa_tup_lst = USA_hospital.fetchall()
     date_lst = []
     canada_lst = []
     usa_lst = []
-    for x in date:
+    for x in date_tup_list:
         date_lst.append(x[0])
-    for x in canada_hospital:
+    for x in canada_tup_list:
         canada_lst.append(x[0])
-    for x in USA_hospital:
+    for x in usa_tup_lst:
         usa_lst.append(x[0])
     fig = go.Figure(data = [
-        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(55, 83, 109)'),
-        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(26, 118, 225)')])
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(0, 0, 255)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(200, 0, 255)')])
     fig.update_layout(barmode='group')
     fig.show()
+    
+
 
 def main():
     cur, conn = open_database('covid.db')
-    uk_category_table(cur, conn)
-    uk_data(cur, conn)
+    #uk_category_table(cur, conn)
+    #uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
