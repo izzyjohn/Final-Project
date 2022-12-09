@@ -202,13 +202,32 @@ def write_textfile(file_name, cur, conn):
     f.write("Average Number of new Covid Cases in Canada: " + str(canada_average) + "\n")
 
 
+# def visualization_1(cur, conn):
+#     date = cur.execute("SELECT date FROM Canada LIMIT 10")
+#     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada LIMIT 10")
+#     USA_hospital = cur.execute("SELECT current_hospital FROM usa LIMIT 10")
+#     fig = go.Figure(data = [
+#         go.Bar(name = "Canada", x=date, y=canada_hospital, color = 'rgb(55, 83, 109)'),
+#         go.Bar(name = "USA", x=date, y=USA_hospital, color = 'rgb(26, 118, 225)')])
+#     fig.update_layout(barmode='group')
+#     fig.show()
+
 def visualization_1(cur, conn):
     date = cur.execute("SELECT date FROM Canada LIMIT 10")
     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada LIMIT 10")
     USA_hospital = cur.execute("SELECT current_hospital FROM usa LIMIT 10")
+    date_lst = []
+    canada_lst = []
+    usa_lst = []
+    for x in date:
+        date_lst.append(x[0])
+    for x in canada_hospital:
+        canada_lst.append(x[0])
+    for x in USA_hospital:
+        usa_lst.append(x[0])
     fig = go.Figure(data = [
-        go.Bar(name = "Canada", x=date, y=canada_hospital, color = 'rgb(55, 83, 109)'),
-        go.Bar(name = "USA", x=date, y=USA_hospital, color = 'rgb(26, 118, 225)')])
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, color = 'rgb(55, 83, 109)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, color = 'rgb(26, 118, 225)')])
     fig.update_layout(barmode='group')
     fig.show()
 
