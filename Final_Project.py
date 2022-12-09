@@ -126,11 +126,11 @@ def dif_Us_Canada_Average_Icu(cur, conn):
     num_dates = len(tup_list)
     canada_total = 0
     for date in tup_list:
-        canada_total += tup_list[2]
+        canada_total += date[2]
     canada_average = canada_total/num_dates
     us_total = 0
     for date in tup_list:
-        us_total += tup_list[2]
+        us_total += date[2]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
     return dif_average
@@ -142,14 +142,33 @@ def dif_Us_Canada_Average_Hospital(cur, conn):
     num_dates = len(tup_list)
     canada_total = 0
     for date in tup_list:
-        canada_total += tup_list[2]
+        canada_total += date[2]
     canada_average = canada_total/num_dates
     us_total = 0
     for date in tup_list:
-        us_total += tup_list[2]
+        us_total += date[2]
     us_average = us_total/num_dates
     dif_average = us_average - canada_average
     return dif_average
+
+def uk_new_cases_average(cur, conn):
+    res = cur.execute('SELECT new_cases FROM UK')
+    tup_list = res.fetchall()
+    case_total = 0
+    num_dates = len(tup_list)
+    for date in tup_list:
+        case_total += date[0]
+    uk_average = case_total/num_dates
+    return uk_average
+
+def write_textfile(file_name, cur, conn):
+    f = open(file_name, "w")
+    dif_Average_Hospital = dif_Us_Canada_Average_Hospital(cur, conn)
+    dif_Average_Icu = dif_Us_Canada_Average_Icu(cur, conn)
+    new_cases_average = uk_new_cases_average(cur, conn)
+    f.write("Difference between Average Hospitalizations for USA and Canada: " + str(dif_Average_Hospital) + "\n")
+    f.write("Difference between Average Number of Patients in the ICU for USA and Canada: " + str(dif_Average_Icu) + "\n")
+    f.write("Average Number of new Covid Cases in the UK: " + str(new_cases_average) + "\n")
 
 
 def main():
@@ -158,6 +177,7 @@ def main():
     uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
+    write_textfile("Covid-Calculations.txt", cur, conn)
 
 main()
 
