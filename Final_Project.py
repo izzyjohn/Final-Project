@@ -226,8 +226,8 @@ def visualization_1(cur, conn):
     for x in USA_hospital:
         usa_lst.append(x[0])
     fig = go.Figure(data = [
-        go.Bar(name = "Canada", x=date_lst, y=canada_lst, color = 'rgb(55, 83, 109)'),
-        go.Bar(name = "USA", x=date_lst, y=usa_lst, color = 'rgb(26, 118, 225)')])
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(55, 83, 109)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(26, 118, 225)')])
     fig.update_layout(barmode='group')
     fig.show()
 
