@@ -151,8 +151,15 @@ def dif_Us_Canada_Average_Hospital(cur, conn):
     dif_average = us_average - canada_average
     return dif_average
 
-def uk_total_death_average(cur, conn):
-    res = cur.execute(SELECT )
+def uk_new_cases_average(cur, conn):
+    res = cur.execute('SELECT new_cases FROM UK')
+    tup_list = res.fetchall()
+    case_total = 0
+    num_dates = len(tup_list)
+    for date in tup_list:
+        case_total += tup_list[0]
+    uk_average = case_total/num_dates
+    return uk_average
 
 def main():
     cur, conn = open_database('covid.db')
