@@ -232,7 +232,7 @@ def write_textfile(file_name, cur, conn):
 #     fig.show()
 
 def visualization_1(cur, conn):
-    date = cur.execute("SELECT date FROM Canada")
+    date = cur.execute("SELECT date FROM usa")
     date_tup_list = date.fetchall()
     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada")
     canada_tup_list = canada_hospital.fetchall()
@@ -250,15 +250,16 @@ def visualization_1(cur, conn):
     fig = go.Figure(data = [
         go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(0, 0, 255)'),
         go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(200, 0, 255)')])
-    fig.update_layout(barmode='group')
+    title_str = "The Number of Hospitalizations Between the US and Canada"
+    fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
     fig.show()
     
 
 
 def main():
     cur, conn = open_database('covid.db')
-    #uk_category_table(cur, conn)
-    #uk_data(cur, conn)
+    # uk_category_table(cur, conn)
+    # uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
