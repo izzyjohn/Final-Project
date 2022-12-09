@@ -34,7 +34,7 @@ def uk_data(cur, conn):
         new_cases = d["latestBy"]
         total_cases = d['confirmed']
         new_deaths = d['deathNew']
-        if new_deaths == "None":
+        if new_deaths == None:
             n_death_category = "very low"
         elif type(new_deaths) == int:
             if new_deaths < 10:
@@ -52,6 +52,8 @@ def uk_data(cur, conn):
         res = cur.execute(f"SELECT id FROM death_category WHERE category = '{n_death_category}'")
         n_death_id = res.fetchone()[0]
         total_deaths = d['death']
+        if total_deaths == None:
+            total_deaths = 0
         cur.execute("INSERT OR IGNORE INTO UK (date, new_cases, total_cases, n_death_id, total_deaths) \
         VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_id, total_deaths))
     conn.commit()
@@ -96,14 +98,59 @@ def us_data(cur, conn):
     for date_info in dates25:
         date = date_info['date']
         total_cases = date_info['cases']['total']['value']
+        if total_cases == None:
+            total_cases = 0
         change_cases = date_info['cases']['total']['calculated']['change_from_prior_day']
+        if change_cases == None:
+            change_cases = 0
         total_deaths = date_info['outcomes']['death']['total']['value']
+        if total_deaths == None:
+            total_deaths = 0
         change_deaths = date_info['outcomes']['death']['total']['calculated']['change_from_prior_day']
+        if change_deaths == None:
+            change_deaths = 0
         current_hospital = date_info['outcomes']['hospitalized']['currently']['value']
+        if current_hospital == None:
+            current_hospital = 0
         current_icu = date_info['outcomes']['hospitalized']['in_icu']['currently']['value']
+        if current_icu == None:
+            current_icu = 0
         cur.execute("INSERT OR IGNORE INTO usa (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu) \
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
     conn.commit()
+
+def dif_Us_Canada_Average_Icu(cur, conn):
+    res = cur.execute('SELECT Canada.date, usa.date, Canada.total_criticals, usa.current_icu \
+    FROM Canada JOIN usa ON Canada.date = usa.date')
+    tup_list = res.fetchall()
+    num_dates = len(tup_list)
+    canada_total = 0
+    for date in tup_list:
+        canada_total += tup_list[2]
+    canada_average = canada_total/num_dates
+    us_total = 0
+    for date in tup_list:
+        us_total += tup_list[2]
+    us_average = us_total/num_dates
+    dif_average = us_average - canada_average
+    return dif_average
+
+def dif_Us_Canada_Average_Hospital(cur, conn):
+    res = cur.execute('SELECT Canada.date, usa.date, Canada.total_hospitalizations, usa.current_hospital \
+    FROM Canada JOIN usa ON Canada.date = usa.date')
+    tup_list = res.fetchall()
+    num_dates = len(tup_list)
+    canada_total = 0
+    for date in tup_list:
+        canada_total += tup_list[2]
+    canada_average = canada_total/num_dates
+    us_total = 0
+    for date in tup_list:
+        us_total += tup_list[2]
+    us_average = us_total/num_dates
+    dif_average = us_average - canada_average
+    return dif_average
+
 
 def main():
     cur, conn = open_database('covid.db')
