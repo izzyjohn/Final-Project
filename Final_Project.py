@@ -4,6 +4,7 @@ import json
 import os
 import requests
 import plotly.graph_objects as go
+import plotly.express as px
 
 uk_url = 'https://api.coronavirus.data.gov.uk/v1/data'
 canada_url = 'https://api.covid19tracker.ca/reports'
@@ -201,36 +202,6 @@ def write_textfile(file_name, cur, conn):
     f.write("Average Number of new Covid Cases in the USA: " + str(us_average) + "\n")
     f.write("Average Number of new Covid Cases in Canada: " + str(canada_average) + "\n")
 
-
-# def visualization_1(cur, conn):
-#     date = cur.execute("SELECT date FROM Canada LIMIT 10")
-#     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada LIMIT 10")
-#     USA_hospital = cur.execute("SELECT current_hospital FROM usa LIMIT 10")
-#     fig = go.Figure(data = [
-#         go.Bar(name = "Canada", x=date, y=canada_hospital, color = 'rgb(55, 83, 109)'),
-#         go.Bar(name = "USA", x=date, y=USA_hospital, color = 'rgb(26, 118, 225)')])
-#     fig.update_layout(barmode='group')
-#     fig.show()
-
-# def visualization_1(cur, conn):
-#     date = cur.execute("SELECT date FROM Canada")
-#     canada_hospital = cur.execute("SELECT total_hospitalizations FROM Canada")
-#     USA_hospital = cur.execute("SELECT current_hospital FROM usa")
-#     date_lst = []
-#     canada_lst = []
-#     usa_lst = []
-#     for x in date:
-#         date_lst.append(x[0])
-#     for x in canada_hospital:
-#         canada_lst.append(x[0])
-#     for x in USA_hospital:
-#         usa_lst.append(x[0])
-#     fig = go.Figure(data = [
-#         go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(55, 83, 109)'),
-#         go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(26, 118, 225)')])
-#     fig.update_layout(barmode='group')
-#     fig.show()
-
 def visualization_1(cur, conn):
     date = cur.execute("SELECT date FROM usa")
     date_tup_list = date.fetchall()
@@ -248,14 +219,40 @@ def visualization_1(cur, conn):
     for x in usa_tup_lst:
         usa_lst.append(x[0])
     fig = go.Figure(data = [
-        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(0, 0, 255)'),
-        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(200, 0, 255)')])
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(200, 0, 255)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(0, 0, 20)')])
     title_str = "The Number of Hospitalizations Between the US and Canada"
     fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
     fig.show()
+
+def visualization_2(cur, conn):
+    date = cur.execute("SELECT date FROM usa")
+    date_tup_list = date.fetchall()
+    canada_icu = cur.execute("SELECT total_criticals FROM Canada")
+    canada_tup_list = canada_icu.fetchall()
+    USA_icu = cur.execute("SELECT current_icu FROM usa")
+    usa_tup_lst = USA_icu.fetchall()
+    date_lst = []
+    canada_lst = []
+    usa_lst = []
+    for x in date_tup_list:
+        date_lst.append(x[0])
+    for x in canada_tup_list:
+        canada_lst.append(x[0])
+    for x in usa_tup_lst:
+        usa_lst.append(x[0])
+    fig = go.Figure(data = [
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(200, 0, 255)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(0, 0, 20)')])
+    title_str = "The Number of Hospitalizations Between the US and Canada"
+    fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
+    fig.show()
+
+def visualization_3(cur, conn):
+    fig = go.FigureWidget(data=go.Bar(y=[2, 3, 1]))
+    path = os.path.dirname(os.path.abspath(__file__))
+    fig.show()
     
-
-
 def main():
     cur, conn = open_database('covid.db')
     # uk_category_table(cur, conn)
@@ -264,6 +261,8 @@ def main():
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
     visualization_1(cur, conn)
+    visualization_2(cur, conn)
+    visualization_3(cur, conn)
 
 main()
 
