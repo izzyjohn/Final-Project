@@ -255,14 +255,14 @@ def visualization_3(cur, conn):
     
 def main():
     cur, conn = open_database('covid.db')
-    # uk_category_table(cur, conn)
-    # uk_data(cur, conn)
+    uk_category_table(cur, conn)
+    uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
     visualization_1(cur, conn)
     visualization_2(cur, conn)
-    visualization_3(cur, conn)
+    #visualization_3(cur, conn)
 
 main()
 
