@@ -300,12 +300,11 @@ def visualization_5(cur, conn):
         'layout': {'title': {'text': 'Number of People in Each Death Category'}}
     })
     fig.show()
-    pass
 
 def main():
     cur, conn = open_database('covid.db')
-    uk_category_table(cur, conn)
-    uk_data(cur, conn)
+    # uk_category_table(cur, conn)
+    # uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
