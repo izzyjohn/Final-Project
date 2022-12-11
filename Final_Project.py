@@ -4,7 +4,6 @@ import json
 import os
 import requests
 import plotly.graph_objects as go
-import plotly.express as px
 
 uk_url = 'https://api.coronavirus.data.gov.uk/v1/data'
 canada_url = 'https://api.covid19tracker.ca/reports'
@@ -301,10 +300,29 @@ def visualization_5(cur, conn):
     })
     fig.show()
 
+def visualization_6(cur, conn):
+    date = cur.execute("SELECT date FROM usa")
+    date_tup_list = date.fetchall()
+    usa_icu = cur.execute("SELECT change_cases FROM usa")
+    usa_tup_list = usa_icu.fetchall()
+    date_lst = []
+    usa_lst = []
+    for x in date_tup_list:
+        date_lst.append(x[0])
+    for x in usa_tup_list:
+        usa_lst.append(x[0])
+    fig = go.Figure({
+        'data' : [{'type': 'bar',
+            'x': date_lst,
+            'y': usa_lst}],
+        'layout': {'title': {'text': 'Current Number of Covid Cases in USA'}}
+    })
+    fig.show()
+
 def main():
     cur, conn = open_database('covid.db')
-    # uk_category_table(cur, conn)
-    # uk_data(cur, conn)
+    uk_category_table(cur, conn)
+    uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
@@ -313,6 +331,7 @@ def main():
     visualization_3(cur, conn)
     visualization_4(cur, conn)
     visualization_5(cur, conn)
+    visualization_6(cur, conn)
 
 main()
 
