@@ -9,18 +9,21 @@ uk_url = 'https://api.coronavirus.data.gov.uk/v1/data'
 canada_url = 'https://api.covid19tracker.ca/reports'
 us_url = 'https://api.covidtracking.com/v2/us/daily.json'
 
+#Takes a filename and opens a database with the name filename.db. It returns conn and cur objects.
 def open_database(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
     cur = conn.cursor()
     return cur, conn
 
+# Returns dictionary of information found from api url 
 def read_api(url):
     r = requests.get(url)
     info = r.text
     d = json.loads(info)
     return d
 
+# Reads in information from uk data dictionary and adds information to a tabled named UK in the database 
 def uk_data(cur, conn):
     api_data = read_api(uk_url)
     data_dict = api_data['data']
@@ -59,6 +62,7 @@ def uk_data(cur, conn):
         VALUES (?, ?, ?, ?, ?)", (date, new_cases, total_cases, n_death_id, total_deaths))
     conn.commit()
 
+#Creates a table named death_category which stores id key that correlates with qualitative information about new deaths daily in the UK
 def uk_category_table(cur, conn):
     cur.execute("CREATE TABLE IF NOT EXISTS death_category (id INTEGER PRIMARY KEY, category TEXT UNIQUE)")
     categories = ["very low", "low", "medium", "high", "very high"]
@@ -66,6 +70,7 @@ def uk_category_table(cur, conn):
         cur.execute("INSERT OR IGNORE INTO death_category (id, category) VALUES (?, ?)", (i,categories[i]))
     conn.commit()
 
+# Reads in information from canada data dictionary and adds information to a tabled named Canada in the database 
 def canada_data(cur, conn):
     api_data = read_api(canada_url)
     data_dict = api_data['data']
@@ -87,6 +92,7 @@ def canada_data(cur, conn):
         total_fatalities, change_fatalities, total_criticals, total_hospitalizations))
     conn.commit()
 
+# Reads in information from US data dictionary and adds information to a tabled named usa in the database 
 def us_data(cur, conn):
     data = read_api(us_url)
     dates = data['data']
@@ -120,6 +126,7 @@ def us_data(cur, conn):
             VALUES(?,?,?,?,?,?,?)", (date, total_cases, change_cases, total_deaths, change_deaths, current_hospital, current_icu))
     conn.commit()
 
+# Calculates the average number of people in ICU per day in the US and in Canada and then finds the difference between US and Canada’s average
 def dif_Us_Canada_Average_Icu(cur, conn):
     res = cur.execute('SELECT Canada.date, usa.date, Canada.total_criticals, usa.current_icu \
     FROM Canada JOIN usa ON Canada.date = usa.date')
@@ -137,6 +144,7 @@ def dif_Us_Canada_Average_Icu(cur, conn):
     rounded_average = round(dif_average, 3)
     return rounded_average
 
+# Calculates the average number of people in hospital per day in the US and in Canada and then finds the difference between US and Canada’s average
 def dif_Us_Canada_Average_Hospital(cur, conn):
     res = cur.execute('SELECT Canada.date, usa.date, Canada.total_hospitalizations, usa.current_hospital \
     FROM Canada JOIN usa ON Canada.date = usa.date')
@@ -154,6 +162,7 @@ def dif_Us_Canada_Average_Hospital(cur, conn):
     rounded_average = round(dif_average, 3)
     return rounded_average
 
+# Calculates the average number of new cases per day in the UK
 def uk_new_cases_average(cur, conn):
     res = cur.execute('SELECT new_cases FROM UK')
     tup_list = res.fetchall()
@@ -165,6 +174,7 @@ def uk_new_cases_average(cur, conn):
     rounded_average = round(uk_average, 3)
     return rounded_average
 
+# Calculates the average number of new cases per day in the US
 def us_new_cases_average(cur, conn):
     res = cur.execute('SELECT change_cases FROM usa')
     tup_list = res.fetchall()
@@ -176,6 +186,7 @@ def us_new_cases_average(cur, conn):
     rounded_average = round(us_average, 3)
     return rounded_average
 
+# Calculates the average number of new cases per day in the Canada
 def canada_new_cases_average(cur, conn):
     res = cur.execute('SELECT change_cases FROM Canada')
     tup_list = res.fetchall()
@@ -187,7 +198,7 @@ def canada_new_cases_average(cur, conn):
     rounded_average = round(canada_average, 3)
     return rounded_average
 
-
+# Writes out information for calculation functions to the file with name of passed filename
 def write_textfile(file_name, cur, conn):
     f = open(file_name, "w")
     dif_Average_Hospital = dif_Us_Canada_Average_Hospital(cur, conn)
@@ -201,6 +212,7 @@ def write_textfile(file_name, cur, conn):
     f.write("Average Number of new Covid Cases in the USA: " + str(us_average) + "\n")
     f.write("Average Number of new Covid Cases in Canada: " + str(canada_average) + "\n")
 
+# Creates graph based on database that displays the number of current people in hospitalization for Covid-19 in both the US and Canada as time progresses
 def visualization_1(cur, conn):
     date = cur.execute("SELECT date FROM usa")
     date_tup_list = date.fetchall()
@@ -224,6 +236,7 @@ def visualization_1(cur, conn):
     fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
     fig.show()
 
+#Creates graph based on database that displays the number of current people in the ICU for Covid-19 in both the US and Canada as time progresses
 def visualization_2(cur, conn):
     date = cur.execute("SELECT date FROM usa")
     date_tup_list = date.fetchall()
@@ -247,6 +260,7 @@ def visualization_2(cur, conn):
     fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
     fig.show()
 
+#Creates a bar graph showing the average number of new new cases per day in Canada, the US, and the UK
 def visualization_3(cur, conn):
     uk = uk_new_cases_average(cur, conn)
     canada = canada_new_cases_average(cur, conn)
@@ -256,6 +270,7 @@ def visualization_3(cur, conn):
     ) 
     fig.show()
 
+#Creates graph showing the number of current cases of Covid 19 in Canada by day
 def visualization_4(cur, conn):
     date = cur.execute("SELECT date FROM Canada")
     date_tup_list = date.fetchall()
@@ -272,6 +287,7 @@ def visualization_4(cur, conn):
     ) 
     fig.show()
 
+#Creates bar graph shows the amount of days in each number of new deaths category in the UK
 def visualization_5(cur, conn):
     res = cur.execute('SELECT UK.n_death_id, death_category.category, death_category.id FROM UK JOIN death_category ON UK.n_death_id = death_category.id')
     tup_list = res.fetchall()
@@ -294,6 +310,7 @@ def visualization_5(cur, conn):
     })
     fig.show()
 
+# Creates graph showing the number of current cases of Covid 19 in the US by day
 def visualization_6(cur, conn):
     date = cur.execute("SELECT date FROM usa")
     date_tup_list = date.fetchall()
@@ -309,6 +326,7 @@ def visualization_6(cur, conn):
         layout=dict(title=dict(text='Current Number of Covid Cases in USA'))
     ) 
     fig.show()
+
 
 def main():
     cur, conn = open_database('covid.db')
