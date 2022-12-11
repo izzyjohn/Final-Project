@@ -241,9 +241,9 @@ def visualization_2(cur, conn):
     for x in usa_tup_lst:
         usa_lst.append(x[0])
     fig = go.Figure(data = [
-        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(200, 0, 255)'),
-        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(0, 0, 20)')])
-    title_str = "The Number of Hospitalizations Between the US and Canada"
+        go.Bar(name = "Canada", x=date_lst, y=canada_lst, marker_color = 'rgb(255, 87, 81)'),
+        go.Bar(name = "USA", x=date_lst, y=usa_lst, marker_color = 'rgb(0, 0, 255)')])
+    title_str = "The Number of ICU Patients Between the US and Canada"
     fig.update_layout(title = title_str, xaxis_tickangle=-45, barmode='group')
     fig.show()
 
@@ -251,12 +251,9 @@ def visualization_3(cur, conn):
     uk = uk_new_cases_average(cur, conn)
     canada = canada_new_cases_average(cur, conn)
     usa = us_new_cases_average(cur, conn)
-    fig = go.Figure({
-        'data' : [{'type': 'bar',
-            'x': ['UK', 'Canada', 'USA'],
-            'y': [uk, canada, usa]}],
-        'layout': {'title': {'text': 'Average Number of New Covid Cases by Country'}}
-    })
+    fig = go.Figure(data = [go.Bar(x=['UK', 'Canada', 'USA'], y=[uk, canada, usa], marker_color = 'rgb(255, 0, 0)')], 
+        layout=dict(title=dict(text='Average Number of New Covid Cases by Country'))
+    ) 
     fig.show()
 
 def visualization_4(cur, conn):
@@ -270,12 +267,9 @@ def visualization_4(cur, conn):
         date_lst.append(x[0])
     for x in canada_tup_list:
         canada_lst.append(x[0])
-    fig = go.Figure({
-        'data' : [{'type': 'bar',
-            'x': date_lst,
-            'y': canada_lst}],
-        'layout': {'title': {'text': 'Current Number of Covid Cases in Canada'}}
-    })
+    fig = go.Figure(data = [go.Bar(x=date_lst, y=canada_lst, marker_color = 'rgb(230, 100, 250)')], 
+        layout=dict(title=dict(text='Current Number of Covid Cases in Canada'))
+    ) 
     fig.show()
 
 def visualization_5(cur, conn):
@@ -311,12 +305,9 @@ def visualization_6(cur, conn):
         date_lst.append(x[0])
     for x in usa_tup_list:
         usa_lst.append(x[0])
-    fig = go.Figure({
-        'data' : [{'type': 'bar',
-            'x': date_lst,
-            'y': usa_lst}],
-        'layout': {'title': {'text': 'Current Number of Covid Cases in USA'}}
-    })
+    fig = go.Figure(data = [go.Bar(x=date_lst, y=usa_lst, marker_color = 'rgb(255, 87, 81)')], 
+        layout=dict(title=dict(text='Current Number of Covid Cases in USA'))
+    ) 
     fig.show()
 
 def main():
