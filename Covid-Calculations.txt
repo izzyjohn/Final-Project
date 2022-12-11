@@ -1,5 +1,5 @@
-Difference between Average Hospitalizations for USA and Canada: 49036.75
-Difference between Average Number of Patients in the ICU for USA and Canada: 9932.395
-Average Number of new Covid Cases in the UK: 25587.232
-Average Number of new Covid Cases in the USA: 68467.831
-Average Number of new Covid Cases in Canada: 4172.449
+Difference between Average Hospitalizations for USA and Canada: 23983.638
+Difference between Average Number of Patients in the ICU for USA and Canada: 5796.466
+Average Number of new Covid Cases in the UK: 2081.573
+Average Number of new Covid Cases in the USA: 16468.771
+Average Number of new Covid Cases in Canada: 626.657
