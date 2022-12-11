@@ -249,20 +249,71 @@ def visualization_2(cur, conn):
     fig.show()
 
 def visualization_3(cur, conn):
-    fig = go.FigureWidget(data=go.Bar(y=[2, 3, 1]))
-    path = os.path.dirname(os.path.abspath(__file__))
+    uk = uk_new_cases_average(cur, conn)
+    canada = canada_new_cases_average(cur, conn)
+    usa = us_new_cases_average(cur, conn)
+    fig = go.Figure({
+        'data' : [{'type': 'bar',
+            'x': ['UK', 'Canada', 'USA'],
+            'y': [uk, canada, usa]}],
+        'layout': {'title': {'text': 'Average Number of New Covid Cases by Country'}}
+    })
     fig.show()
-    
+
+def visualization_4(cur, conn):
+    date = cur.execute("SELECT date FROM Canada")
+    date_tup_list = date.fetchall()
+    canada_icu = cur.execute("SELECT change_cases FROM Canada")
+    canada_tup_list = canada_icu.fetchall()
+    date_lst = []
+    canada_lst = []
+    for x in date_tup_list:
+        date_lst.append(x[0])
+    for x in canada_tup_list:
+        canada_lst.append(x[0])
+    fig = go.Figure({
+        'data' : [{'type': 'bar',
+            'x': date_lst,
+            'y': canada_lst}],
+        'layout': {'title': {'text': 'Current Number of Covid Cases in Canada'}}
+    })
+    fig.show()
+
+def visualization_5(cur, conn):
+    res = cur.execute('SELECT UK.n_death_id, death_category.category, death_category.id FROM UK JOIN death_category ON UK.n_death_id = death_category.id')
+    tup_list = res.fetchall()
+    x_lst = []
+    id_lst = []
+    entire_id_lst = []
+    y_lst = []
+    for x in tup_list:
+        if(x[1] not in x_lst):
+            x_lst.append(x[1])
+            id_lst.append(x[0])
+        entire_id_lst.append(x[0])
+    for x in id_lst:
+        y_lst.append(entire_id_lst.count(x))
+    fig = go.Figure({
+        'data' : [{'type': 'bar',
+            'x': x_lst,
+            'y': y_lst}],
+        'layout': {'title': {'text': 'Number of People in Each Death Category'}}
+    })
+    fig.show()
+    pass
+
 def main():
     cur, conn = open_database('covid.db')
-    # uk_category_table(cur, conn)
-    # uk_data(cur, conn)
+    uk_category_table(cur, conn)
+    uk_data(cur, conn)
     canada_data(cur, conn)
     us_data(cur, conn)
     write_textfile("Covid-Calculations.txt", cur, conn)
     visualization_1(cur, conn)
     visualization_2(cur, conn)
     visualization_3(cur, conn)
+    visualization_4(cur, conn)
+    visualization_5(cur, conn)
 
 main()
 
