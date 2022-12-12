@@ -306,7 +306,7 @@ def visualization_5(cur, conn):
         'data' : [{'type': 'bar',
             'x': x_lst,
             'y': y_lst}],
-        'layout': {'title': {'text': 'Number of People in Each Death Category'}}
+        'layout': {'title': {'text': 'Number of Days in Each Death Category in UK'}}
     })
     fig.show()
 
