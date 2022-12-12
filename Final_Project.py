@@ -206,11 +206,13 @@ def write_textfile(file_name, cur, conn):
     uk_average = uk_new_cases_average(cur, conn)
     us_average = us_new_cases_average(cur, conn)
     canada_average = canada_new_cases_average(cur, conn)
-    f.write("Difference between Average Hospitalizations for USA and Canada: " + str(dif_Average_Hospital) + "\n")
-    f.write("Difference between Average Number of Patients in the ICU for USA and Canada: " + str(dif_Average_Icu) + "\n")
-    f.write("Average Number of new Covid Cases in the UK: " + str(uk_average) + "\n")
-    f.write("Average Number of new Covid Cases in the USA: " + str(us_average) + "\n")
-    f.write("Average Number of new Covid Cases in Canada: " + str(canada_average) + "\n")
+    cur.execute('SELECT COUNT(date) FROM usa')
+    num_days = cur.fetchone()[0]
+    f.write("Difference between Average Hospitalizations for USA and Canada over " + str(num_days) + " days: "  + str(dif_Average_Hospital) + "\n")
+    f.write("Difference between Average Number of Patients in the ICU for USA and Canada over " + str(num_days) + " days: " + str(dif_Average_Icu) + "\n")
+    f.write("Average Number of new Covid Cases in the UK over " + str(num_days) + " days: " + str(uk_average) + "\n")
+    f.write("Average Number of new Covid Cases in the USA over " + str(num_days) + " days: " + str(us_average) + "\n")
+    f.write("Average Number of new Covid Cases in Canada over " + str(num_days) + " days: " + str(canada_average) + "\n")
 
 # Creates graph based on database that displays the number of current people in hospitalization for Covid-19 in both the US and Canada as time progresses
 def visualization_1(cur, conn):

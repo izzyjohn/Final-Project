@@ -1,0 +1,5 @@
+Difference between Average Hospitalizations for USA and Canada over 100 days: 12017.364
+Difference between Average Number of Patients in the ICU for USA and Canada over 100 days: 2779.614
+Average Number of new Covid Cases in the UK over 100 days: 2152.66
+Average Number of new Covid Cases in the USA over 100 days: 8089.17
+Average Number of new Covid Cases in Canada over 100 days: 594.96
